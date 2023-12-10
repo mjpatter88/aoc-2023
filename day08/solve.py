@@ -1,5 +1,5 @@
 from itertools import cycle
-
+import math
 
 class Map:
 
@@ -10,6 +10,9 @@ class Map:
         self._instr_iter = cycle(self.instructions)
         self._current_node = "AAA"
     
+    def set_starting_node(self, node: str):
+        self._current_node = node
+
     def next(self):
         instr = next(self._instr_iter)
         node = self.network[self._current_node]
@@ -25,8 +28,31 @@ class Map:
         return f"Map(instructions: {self.instructions}, network: {self.network})"
 
 
+# The idea here is to find the length of the repeating loop
+# for each path, and then find the least common multiple
+# of each length to find the shortest number of steps
+# for them all to end on Z.
+# I don't think this always works, but it does if the path from start to
+# finish always loops equally, which seems to be true based on trial and error.
 def solve2(map: Map) -> int:
-    return 0
+    starting_nodes = []
+    for node in map.network.keys():
+        if node.endswith("A"):
+            starting_nodes.append(node)
+    print(starting_nodes)
+    
+    distances = []
+
+    for node in starting_nodes:
+        map.set_starting_node(node)
+        counter = 1
+        while map.next()[2] != "Z":
+            counter += 1
+        distances.append(counter)
+    
+    print(distances)
+    
+    return math.lcm(*distances)
 
 def solve1(map: Map) -> int:
     counter = 1
@@ -43,8 +69,8 @@ def parse_input(lines: list[str]) -> Map:
         first, second = line.split("=")
         name = first.strip()
         left, right = second.split(",")
-        left = "".join((char for char in left if char.isalpha()))
-        right = "".join((char for char in right if char.isalpha()))
+        left = "".join((char for char in left if char.isalnum()))
+        right = "".join((char for char in right if char.isalnum()))
         
         network[name] = (left, right)
         
@@ -55,7 +81,6 @@ def main():
     with open("input.txt") as in_file:
         lines = in_file.readlines()
     map = parse_input(lines)
-    print(map)
 
     answer1 = solve1(map)
     answer2 = solve2(map)

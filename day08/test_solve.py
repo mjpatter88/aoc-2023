@@ -22,6 +22,19 @@ test_lines_repeat = [
 "ZZZ = (ZZZ, ZZZ)",
 ]
 
+test_lines_2 = [
+"LR",
+"",
+"11A = (11B, XXX)",
+"11B = (XXX, 11Z)",
+"11Z = (11B, XXX)",
+"22A = (22B, XXX)",
+"22B = (22C, 22C)",
+"22C = (22Z, 22Z)",
+"22Z = (22B, 22B)",
+"XXX = (XXX, XXX)",
+]
+
 class TestStringMethods(unittest.TestCase):
 
     def test_solve1(self):
@@ -34,9 +47,10 @@ class TestStringMethods(unittest.TestCase):
         answer = solve1(map)
         self.assertEqual(answer, 6)
     
-    # def test_solve2(self):
-    #     answer = solve2(test_lines)
-    #     self.assertEqual(answer, 467835)
+    def test_solve1_repeat(self):
+        map = parse_input(test_lines_2)
+        answer = solve2(map)
+        self.assertEqual(answer, 6)
 
 if __name__ == '__main__':
     unittest.main()
